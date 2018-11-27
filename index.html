@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
     <link rel="stylesheet" href="styles2.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
     <link rel="shortcut icon" href="images/favicon.png">
     <title>Cleanify</title>
@@ -25,8 +26,8 @@
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="index.html">
-            <span class="navbar-logo">Spotify</span>
-            <span class="navbar-title">Clean Your Music</span>
+            <span style="font-family:'Montserrat', sans-serif;font-size:48px;position:relative;top:10px;">Clean<span style="color:#6fb044">ify</span></span>
+            <!-- <span class="navbar-title" style="font-family:'Montserrat', sans-serif;">Clean Your Music</span> -->
           </a>
         </div>
        <div class="nav  navbar-nav navbar-right">
@@ -39,22 +40,23 @@
       <div id='intro'>
       <div id='main' class="top jumbotron jumbotron-hero container-fluid">
           <div  class="container" id="jumbo-dialog">
-            <h1 id='ttitle' >Clean your music</h1>
+            <h1 id='ttitle' style="position:relative;top:10px;" >Clean your music</h1>
             <p id='ttext'>
-                Clean your Spotify playlists
+                Substitute explicit songs for clean versions
             </p>
 
-            <div class='col-xs-offset-3 col-xs-6 form-group'>
-                <div id="uri-prompt" class="input-group align-center">
+            <div style="width: 100%;">
+<div class="align-center form-group">
+                <div id="uri-prompt" class="input-group" style="width: 50%;left: 25%;">
                     <span for="uri-text"> Enter the URI for your playlist:</span>
                     <input id="uri-text" type="text" class='form-control'
                         placeholder="spotify:user:spotify:playlist:example">
                 </div>
 
                 <br>
-                <a class="btn btn-primary btn-lg go" id='go' role="button">Clean your playlist</a>
+                <a class="btn btn-primary btn-lg go" id="go" role="button">Clean your playlist</a>
                 <p> </p>
-            </div>
+    </div></div>
             <div class='err-txt'> </div>
           </div>
       </div>
