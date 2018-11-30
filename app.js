@@ -1,14 +1,16 @@
 const http = require('http');
 var fs = require('fs');
 const express = require('express');
-const ejs = require('ejs'); var app = express();
+const ejs = require('ejs');
+var app = express();
+var url = require('url');
 
-const Spotify = require('spotify-web-api-node');
+var SpotifyWebApi = require('spotify-web-api-node');
 
-var spotify = new Spotify({
+var spotifyApi = new SpotifyWebApi({
   clientId: '366e8b5ceafa4a548f5be611eaffe8ab',
   clientSecret: process.env.ClientSecret,
-  redirectUri: 'http://localhost:8080'
+  redirectUri: 'http://localhost:8080/callback/'
 });
 
 var scopes = ['user-read-private', 'user-read-email'],
@@ -18,17 +20,27 @@ var scopes = ['user-read-private', 'user-read-email'],
 
 
 //create authorization url
-var authorizeURL = spotify.createAuthorizeURL(scopes, storedState);
+var authorizeURL = spotifyApi.createAuthorizeURL(scopes, storedState);
 
-fs.writeFileSync("package.json", 'var package = {"authorizeURL":"'+authorizeURL+'"}', 'utf-8');
+fs.writeFileSync("pass.json", 'var package = {"authorizeURL":"'+authorizeURL+'"}', 'utf-8');
 
-console.log(fs.readFileSync("package.json").toString());
+console.log(fs.readFileSync("pass.json").toString());
 console.log(authorizeURL);
+
+function fullUrl(req){
+  return url.format({
+    protocol: req.protocol,
+    host: req.get('host'),
+    path: req.originalUrl
+  });
+}
 
 app.get('/callback', function(req, res){
   var code = req.query.code || null;
   var storedState = req.state;
   var state = req.query.state || null;
+
+  console.log('hello world');
 
   if (state !== storedState || state === null) {
     res.redirect('/#' + querystring.stringify({error: 'state_mismatch'}));
@@ -47,12 +59,13 @@ app.get('/callback', function(req, res){
       },
       JSON: true
     };
-    }
   }
-})
+});
 
 var connect = require('connect');
 var serveStatic = require('serve-static');
-connect().use(serveStatic(__dirname)).listen(3000, function(){
-    console.log('Server running on 3000...');
+
+connect().use(serveStatic(__dirname)).listen(8080, function(){
+    console.log('Server running on 8080...');
+
 });
