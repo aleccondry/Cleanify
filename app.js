@@ -1,8 +1,7 @@
 const http = require('http');
 var fs = require('fs');
 const express = require('express');
-const ejs = require('ejs');
-var app = express();
+const ejs = require('ejs'); var app = express();
 
 const Spotify = require('spotify-web-api-node');
 
@@ -54,8 +53,6 @@ app.get('/callback', function(req, res){
 
 var connect = require('connect');
 var serveStatic = require('serve-static');
-
-connect().use(serveStatic(__dirname)).listen(8080, function(){
-    console.log('Server running on 8080...');
-
+connect().use(serveStatic(__dirname)).listen(3000, function(){
+    console.log('Server running on 3000...');
 });
