@@ -11,7 +11,8 @@ const path = require('path');
 
 
 var client_id = '366e8b5ceafa4a548f5be611eaffe8ab'; // Your client id
-var client_secret = process.env.ClientSecret; // Your secret
+var client_secret = fs.readFileSync("env.txt").toString();
+console.log("Secret: " + client_secret); // Your secret
 var redirect_uri = 'http://localhost:8080/callback'; // Your redirect uri
 var refresh_token = null;
 
@@ -61,7 +62,7 @@ app.get('/callback', function(req, res){
         client_id: client_id,
         client_secret: client_secret
       },
-      headers: {'Authorization': 'Basic ' + '*<' + (client_id + ':' + client_secret).toString('base64') + '>*' },
+      headers: {'Authorization': 'Basic ' + new Buffer.from((client_id + ':' + client_secret), 'base64')},
       JSON: true
     };
   }
@@ -69,7 +70,7 @@ app.get('/callback', function(req, res){
   console.log('grant_type: ' + authOptions.form.grant_type);
   console.log('Authorization code: ' + authOptions.form.code);
   console.log('redirect_uri: ' + authOptions.form.redirect_uri);
-  console.log('headers: ' + authOptions.headers);
+  console.log('headers: ' + authOptions.headers.Authorization);
 
   // {url:'https://accounts.spotify.com/api/token', form:{grant_type:'authorization_code', code:authOptions.code, redirect_uri: redirect_uri, client_id: client_id, client_secret: client_secret}}
   request.post({url:'https://accounts.spotify.com/api/token', form:{grant_type:'authorization_code', code:authOptions.code, redirect_uri: redirect_uri, client_id: client_id, client_secret: client_secret}}, function(error, response, body){
