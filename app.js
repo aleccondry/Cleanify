@@ -91,7 +91,7 @@ app.get('/callback', function(req, res){
       console.log('WE MADE IT!');
 
       // Send it to  the userpage
-      res.redirect('/userpage');
+      res.redirect('/userpage.html');
     },
     function(err) {
       console.log('Something went wrong!', err);
@@ -99,7 +99,7 @@ app.get('/callback', function(req, res){
   );
 });
 
-app.get('/userpage', function(res, req){
+app.get('/userpage.html', function(res, req){
   if (spotifyApi.getAccessToken()) {
     spotifyApi.getMe()
     .then(function(data) {
