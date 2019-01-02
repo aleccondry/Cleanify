@@ -24,7 +24,14 @@ var spotifyApi = new SpotifyWebApi({
 });
 
 // Create authorization url
-var scopes = ['user-read-private', 'user-read-email'];
+var scopes = [
+    'user-read-private',
+    'user-read-email',
+    'playlist-read-private',
+    'playlist-modify-private',
+    'playlist-modify-public',
+    'playlist-read-collaborative'
+];
 var storedState = Math.random().toString(36).substring(2, 15);
 var authorizeURL = spotifyApi.createAuthorizeURL(scopes, storedState);
 
@@ -91,22 +98,53 @@ app.get('/callback', function(req, res){
       console.log('WE MADE IT!');
 
       // Send it to  the userpage
-      res.redirect('/userpage.html');
-    },
-    function(err) {
-      console.log('Something went wrong!', err);
-    }
+  //    res.redirect('/userpage');
+        if (spotifyApi.getAccessToken()) {
+            spotifyApi.getMe()
+            .then(function(data) {
+              console.log('Some information about the authenticated user', data.body);
+              var id = data.body.id;
+              spotifyApi.getUserPlaylists(id)
+                .then(function(data) {
+                      console.log('Retrieved playlists', data.body);
+        //              res.redirect('/userpage.html')
+                        },function(err) {
+                              console.log('Something went wrong!', err);
+                                });
+            }, function(err) {
+              console.log('Something went wrong!', err);
+            });
+
+            res.redirect('/userpage.html')
+          } else {
+            console.log("Didn't work mamma mia" + spotifyApi.getAccessToken())
+            res.redirect('/')
+          }
+      },
+      function(err) {
+        console.log('Something went wrong!', err);
+      }
   );
 });
 
-app.get('/userpage.html', function(res, req){
+app.get('/userpage', function(res, req){
   if (spotifyApi.getAccessToken()) {
     spotifyApi.getMe()
     .then(function(data) {
       console.log('Some information about the authenticated user', data.body);
+      var id = data.body.id;
+      spotifyApi.getUserPlaylists(id)
+        .then(function(data) {
+              console.log('Retrieved playlists', data.body);
+//              res.redirect('/userpage.html')
+                },function(err) {
+                      console.log('Something went wrong!', err);
+                        });
     }, function(err) {
       console.log('Something went wrong!', err);
     });
+
+    res.redirect('/userpage.html')
   } else {
     console.log("Didn't work mamma mia" + spotifyApi.getAccessToken())
     res.redirect('/')

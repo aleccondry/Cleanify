@@ -1,1 +1,0 @@
-var package = {"authorizeURL":"https://accounts.spotify.com/authorize?client_id=366e8b5ceafa4a548f5be611eaffe8ab&response_type=code&redirect_uri=http://localhost:8080/callback&scope=user-read-private%20user-read-email&state=i7yyicpg61l"}
