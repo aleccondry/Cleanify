@@ -1,7 +1,6 @@
 {
   "name": "cleanify",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "dependencies": {
     "cookie-parser": "^1.4.3",
@@ -24,5 +23,6 @@
   "bugs": {
     "url": "https://github.com/aleccondry/Cleanify/issues"
   },
-  "homepage": "https://github.com/aleccondry/Cleanify#readme"
+  "homepage": "https://github.com/aleccondry/Cleanify#readme",
+  "description": ""
 }

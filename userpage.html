@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://sp-bootstrap.global.ssl.fastly.net/7.4.1/sp-bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="styles2.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script text="text/javascript" src="pass.json"></script>
+    <script type="text/javascript" src="client.js"></script>
+    <link rel="shortcut icon" href="images/favicon.png">
+    <title>Cleanify</title>
+    <!-- Custom styles for this template -->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+  <body >
+    <div id="navbar" class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.html">
+            <span style="font-family:'Montserrat', sans-serif;font-size:48px;position:relative;top:10px;">Clean<span style="color:#6fb044">ify</span></span>
+            <!-- <span class="navbar-title" style="font-family:'Montserrat', sans-serif;">Clean Your Music</span> -->
+          </a>
+        </div>
+       <div class="nav  navbar-nav navbar-right">
+           <span id="info" class="navbar-info navbar-right"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div id='intro'>
+      <div id='main' class="top jumbotron jumbotron-hero container-fluid">
+          <div  class="container" id="jumbo-dialog">
+            <h1 id='ttitle' style="position:relative;top:10px;" >Clean your music</h1>
+            <p id='ttext'>
+                Select a playlist or enter playlist URI
+            </p>
+
+            <div style="width: 100%;">
+<div class="align-center form-group">
+                <div id="uri-prompt" class="input-group" style="width: 50%;left: 25%;">
+                  <select style="width:300px;background-color:#FFFFFF;border: 0;outline: 1px solid #D3D3D3; outline-offset:-1px">
+                    <option>test1</option>
+                    <option>test2</option>
+                    <option>test3</option>
+                  </select>
+                  <br>
+ 					<br>
+                    <input id="uri-text" type="text" class='form-control'
+                        placeholder="spotify:user:mmmatta11:playlist:64NCIR5mN0QOJWJXe9AdSa">
+                </div>
+
+                <br>
+                <a class="btn btn-primary btn-lg go" id="go" role="button">Clean your playlist</a>
+                <p> </p>
+    </div></div>
+            <div class='err-txt'> </div>
+          </div>
+      </div>
+
+  <div class="row">
+  <div id="sidebar" class="sidebar work"> </div>
+
+    <div style="clear:both"> </div>
+    <div id="footer">
+      <div class="container text-center">
+            <p class="text-muted">
+                Powered by <a href="http://spotify.com">Spotify</a>.
+                Created by Mig M Matta.
+                Get the strap.
+            </p>
+      </div>
+    </div>
+</body>
+</html>

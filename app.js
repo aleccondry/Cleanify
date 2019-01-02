@@ -41,6 +41,8 @@ app.use(express.static('public'))
 app.get('/', function(req, res){
   res.sendFile(path.join(__dirname + '/index.html'));
   console.log("home accessed");
+
+
 });
 
 // Callback route (redirect for API)
@@ -87,14 +89,29 @@ app.get('/callback', function(req, res){
       spotifyApi.setRefreshToken(data.body['refresh_token']);
 
       console.log('WE MADE IT!');
+
+      // Send it to  the userpage
+      res.redirect('/userpage');
     },
     function(err) {
       console.log('Something went wrong!', err);
     }
   );
-
-  // Send it back home
-  res.redirect('/');
 });
+
+app.get('/userpage', function(res, req){
+  if (spotifyApi.getAccessToken()) {
+    spotifyApi.getMe()
+    .then(function(data) {
+      console.log('Some information about the authenticated user', data.body);
+    }, function(err) {
+      console.log('Something went wrong!', err);
+    });
+  } else {
+    console.log("Didn't work mamma mia" + spotifyApi.getAccessToken())
+    res.redirect('/')
+  }
+
+})
 
 app.listen(3000);
