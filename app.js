@@ -140,7 +140,37 @@ app.get('/playlists', function(req, res){
 });
 
 app.get('/clean', function(req, res){
-   
+   console.log("cleaning playlist")
+   spotifyApi.getMe().then(function(data){
+     var id = data.body.id;
+     spotifyApi.createPlaylist(id, 'My Cleaned Playlist', { 'public' : false }).then(function(data) {
+       newplaylistID = data.body.id
+       console.log('Created playlist!');
+    }, function(err) {console.log('Something went wrong!', err);});
+
+     spotifyApi.getPlaylist(id, playlistId).then(function(data){
+       var tracks = data.body.tracks;
+       for (var i = 0; i < tracks.length; i++) {
+         if (tracks[i].explicit) {
+           var trackname = tracks[i].name
+           var artist = tracks[i].artists[0].name
+           spotifyApi.searchTracks('track:' + trackname + ' artist:' + artist).then(function(data){
+             console.log(data.body);
+
+           }, function(err) {console.log('Something went wrong!', err);});
+
+         } else {
+           console.log("not explicit")
+           spotifyApi.addTracksToPlaylist(id, newplaylistID, ["spotify:track:" + track[i].id].then(function(data) {
+             console.log('Added tracks to playlist!');
+           }, function(err) {console.log('Something went wrong!', err);});
+         }
+       }
+     }, function(err){console.log("failed to get playlist", err);});
+     spotifyApi.getPlaylist(id, newplaylistID).then(function(data){
+       res.send(data.body);
+     }, function(err){console.log("cant send new playlist", err);});
+   }, function(err){console.log("failed to get me", err);});
 })
 
 app.listen(3000);
