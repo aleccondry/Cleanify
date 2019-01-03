@@ -5,7 +5,14 @@ window.onload = function(){
     console.log("success: " + data.items[0].name);
     var playlists = data.items;
     for(var i = 0; i < playlists.length; i++){
-      $("select").append("<option>"+playlists[i].name+"</option>");
+      $("select").append("<option data-playlist='"+playlists[i].id+"'>"+playlists[i].name+"</option>");
     }
+    $("#go").click("on", function(){
+      var dropdown = document.getElementsByTagName("select")[0];
+      var selected = dropdown.options[dropdown.selectedIndex];
+      $.get("http://cleanify.mooo.com/clean?id="+selected.getAttribute("data-playlist"), function(data){
+
+      });
+    })
   });
 }
