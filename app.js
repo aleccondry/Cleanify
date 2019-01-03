@@ -106,7 +106,7 @@ app.get('/callback', function(req, res){
               var id = data.body.id;
               spotifyApi.getUserPlaylists(id)
                 .then(function(data) {
-                      console.log('Retrieved playlists', data.body);
+                      console.log('Retrieved playlists'/*, data.body*/);
         //              res.redirect('/userpage.html')
                         },function(err) {
                               console.log('Something went wrong!', err);
@@ -127,29 +127,20 @@ app.get('/callback', function(req, res){
   );
 });
 
-app.get('/userpage', function(res, req){
-  if (spotifyApi.getAccessToken()) {
-    spotifyApi.getMe()
-    .then(function(data) {
-      console.log('Some information about the authenticated user', data.body);
-      var id = data.body.id;
-      spotifyApi.getUserPlaylists(id)
-        .then(function(data) {
-              console.log('Retrieved playlists', data.body);
-//              res.redirect('/userpage.html')
-                },function(err) {
-                      console.log('Something went wrong!', err);
-                        });
-    }, function(err) {
-      console.log('Something went wrong!', err);
-    });
 
-    res.redirect('/userpage.html')
-  } else {
-    console.log("Didn't work mamma mia" + spotifyApi.getAccessToken())
-    res.redirect('/')
-  }
+app.get('/playlists', function(req, res){
+  console.log("getting playlists")
+  spotifyApi.getMe().then(function(data){
+    var id = data.body.id;
+    spotifyApi.getUserPlaylists(id).then(function(data){
+      res.json(data.body);
+      console.log("yeeted it over")
+    }, function(err){console.log("Did not yeet", err);}).catch(function(){console.log("promise rejected");});
+  }, function(err){console.log("failed to get user id", err);}).catch(function(){console.log("getMe promise rejected");});
+});
 
+app.get('/clean', function(req, res){
+   
 })
 
 app.listen(3000);
