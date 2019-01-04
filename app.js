@@ -140,36 +140,73 @@ app.get('/playlists', function(req, res){
 });
 
 app.get('/clean', function(req, res){
+   var playlistId = req.query.id || null;
    console.log("cleaning playlist")
    spotifyApi.getMe().then(function(data){
      var id = data.body.id;
      spotifyApi.createPlaylist(id, 'My Cleaned Playlist', { 'public' : false }).then(function(data) {
        newplaylistID = data.body.id
-       console.log('Created playlist!');
-    }, function(err) {console.log('Something went wrong!', err);});
+       console.log('Created playlist!', newplaylistID);
+       spotifyApi.getPlaylist(/*id,*/ playlistId).then(function(data){
+         console.log("getting playlist");
 
-     spotifyApi.getPlaylist(id, playlistId).then(function(data){
-       var tracks = data.body.tracks;
-       for (var i = 0; i < tracks.length; i++) {
-         if (tracks[i].explicit) {
-           var trackname = tracks[i].name
-           var artist = tracks[i].artists[0].name
-           spotifyApi.searchTracks('track:' + trackname + ' artist:' + artist).then(function(data){
-             console.log(data.body);
+         //changes name to correct one
+         var nameOG = data.body.name;
+         spotifyApi.changePlaylistDetails(id, newplaylistID,{name: nameOG + "(Clean)"}).then(function(data) {
+           console.log('changed name to ' + data.body.name);
+         }, function(err) {console.log('Something went wrong!', err);});
+         
+         var tracks = data.body.tracks.items;
+         var i = 0;
+         var timer;
+         timer = setInterval(function(){
+          if(i == tracks.length){timer = -1}
+          else{
+            var track = tracks[i].track;
+             if (track.explicit) {
+               var trackname = track.name
+               var artist = track.artists[0].name
 
-           }, function(err) {console.log('Something went wrong!', err);});
+               //Searches spotify database for tracks containing trackname and artist of tracks[i]
+               spotifyApi.searchTracks('track:' + trackname + ' artist:' + artist).then(function(data){
+                 //array of all searched tracks returned from search request
+                 var searchedTracks = data.body.tracks.items;
+                 for (var i = 0; i < searchedTracks.length; i++) {
+                   //disregards if explicit
+                   if (searchedTracks[i].explicit){
+                     console.log("skip")
+                   //adds to playlist if not explicit and trackname and artist match then breaks the for loop
+                   } else if (searchedTracks[i].name == trackname && searchedTracks[i].artists[0].name == artist) {
+                     spotifyApi.addTracksToPlaylist(/*id,*/ newplaylistID, ["spotify:track:" + searchedTracks[i].id]).then(function(data) {
+                       console.log('Added clean song to playlist!');
+                       break;
+                     }, function(err) {console.log('Something went wrong!', err);});
+                   //disregards if not explicit and track name or artist dont match
+                   } else {
+                     console.log("wrong song")
+                   }
+                 }
+               }, function(err) {console.log('Something went wrong!', err);});
+            //adds already clean songs to the playlist
+             } else {
+               console.log("not explicit")
+               spotifyApi.addTracksToPlaylist(/*id,*/ newplaylistID, ["spotify:track:" + track.id]).then(function(data) {
+                 console.log('Added tracks to playlist!');
+               }, function(err) {console.log('Something went wrong!', err);});
+             }
+            i++;
+          }
+         }, 50)
+//         for (var i = 0; i < tracks.length; i++) {
 
-         } else {
-           console.log("not explicit")
-           spotifyApi.addTracksToPlaylist(id, newplaylistID, ["spotify:track:" + track[i].id].then(function(data) {
-             console.log('Added tracks to playlist!');
-           }, function(err) {console.log('Something went wrong!', err);});
-         }
-       }
-     }, function(err){console.log("failed to get playlist", err);});
-     spotifyApi.getPlaylist(id, newplaylistID).then(function(data){
-       res.send(data.body);
-     }, function(err){console.log("cant send new playlist", err);});
+         //}
+         spotifyApi.getPlaylist(newplaylistID).then(function(data){
+           console.log("sending playlist");
+           res.send(data.body);
+         }, function(err){console.log("cant send new playlist", err);});
+
+       }, function(err){console.log("failed to get playlist", err);});
+    }, function(err){console.log("failed to create new playlist", err);});
    }, function(err){console.log("failed to get me", err);});
 })
 
