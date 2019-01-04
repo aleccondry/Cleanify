@@ -11,7 +11,10 @@ window.onload = function(){
       var dropdown = document.getElementsByTagName("select")[0];
       var selected = dropdown.options[dropdown.selectedIndex];
       $.get("http://cleanify.mooo.com/clean?id="+selected.getAttribute("data-playlist"), function(data){
-
+        var tracks = data.tracks;
+        for(var i = 0; i < tracks.length; i++){
+          console.log(tracks[i]);
+        }
       });
     })
   });
