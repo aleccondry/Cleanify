@@ -13,7 +13,8 @@ window.onload = function(){
     for(var i = 0; i < playlists.length; i++){
       $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
     }
-    $("#go").click("on", function(){//start clean on click
+    $("#go").click(function(){//start clean on click
+      $(this).css('display', 'none');
       //find selected dropdown option
       var dropdown = document.getElementsByTagName("select")[0];
       var selected = dropdown.options[dropdown.selectedIndex];
@@ -63,7 +64,12 @@ function checkTrack(access, playlistID, tracks, index){
     function addTrack(track){
       var id = track.id;
       $.get(getURL("addtrack", access)+"&trackid="+id+"&playlistid="+playlistID, function(data){
-       $("#yeet").append(track.name).scrollTop($(this)[0].scrollHeight);
+       var div = $("#tracks")[0];
+       var shouldScroll = (div.scrollHeight - div.scrollTop < 220);
+       $("#tracks").append("<div class='track'>"+track.name + "</div>");
+       if(shouldScroll){
+         div.scrollTop = div.scrollHeight;
+       }
        //wait before moving on to next track to avoid internal server errors
        setTimeout(function(){checkTrack(access, playlistID, tracks, index+1)}, 100);
       })
@@ -97,6 +103,22 @@ function checkTrack(access, playlistID, tracks, index){
   }
   else{
     //TODO: confirm buttons
+    function toggleDisplay(){
+      $("#go").css('display', 'block');
+      $("#ui").css("display", 'none');
+      $("#tracks").html("");
+    }
+    $("#ui").css("display", "block");
+    $("#cancel").click(function(){
+      toggleDisplay();
+      $(this).off('click');
+      $.get(getURL("remove", access)+"&id=" + playlistID, function(){
+        console.log("removed playlist")
+      })
+    })
+    $("#confirm").click(function(){
+      toggleDisplay();
+    })
   }
 }
 

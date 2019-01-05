@@ -182,5 +182,13 @@ app.get('/tracks', function(req, res){
     }, function(err){console.log("couldn't get tracks", err)});
 });
 
+app.get('/remove', function(req, res){
+  var access = req.query.u;
+  spotifyApi.setAccessToken(access);
+  var id = req.query.id;
+  spotifyApi.unfollowPlaylist(id).then(function(data){console.log("successfully deleted")},
+      function(err){console.log("could not delete", err)});
+})
+
 
 app.listen(3000);

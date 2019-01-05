@@ -21,6 +21,16 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+      .track {
+        background-color: black;
+        color:white;
+        border-style: solid;
+        border-color: white;
+        border-width: 1px;
+        text-align: left;
+      }
+    </style>
 </head>
   <body >
     <div id="navbar" class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -62,7 +72,11 @@
                 <br>
                 <a class="btn btn-primary btn-lg go" id="go" role="button">Clean your playlist</a>
                 <p> </p>
-                <div id="yeet" style="height:100px;overflow:scroll;overflow-y:scroll;"></div>
+                <div id="tracks" style="height:200px;overflow:scroll;"></div>
+                <div id="ui" style="display:none;">
+                  <a class='btn btn-lg go' role='button' id='cancel'>Cancel</a>
+                  <a class='btn btn-lg go' role='button' id='confirm'>Confirm</a>
+                </div>
     </div></div>
             <div class='err-txt'> </div>
           </div>
