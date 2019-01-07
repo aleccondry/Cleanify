@@ -117,11 +117,12 @@ app.get('/callback', function(req, res){
 
 app.get('/playlists', function(req, res){
   var access = req.query.u;
+  var offset = req.query.offset;
   spotifyApi.setAccessToken(access);
   console.log("getting playlists")
   spotifyApi.getMe().then(function(data){
     var id = data.body.id;
-    spotifyApi.getUserPlaylists(id).then(function(data){
+    spotifyApi.getUserPlaylists(id, {"offset": offset}).then(function(data){
       res.json(data.body);
       console.log("yeeted it over")
     }, function(err){console.log("Did not yeet", err);}).catch(function(){console.log("promise rejected");});

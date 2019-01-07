@@ -6,54 +6,74 @@ window.onload = function(){
   //get access token from url
   const urlParams = new URLSearchParams(window.location.search);
   const access = urlParams.get('u');
-
+  
   //get playlists
-  $.get(getURL("playlists", access), function(data){
+  $.get(getURL("playlists", access)+"&offset=0", function(data){
     playlists = data.items; //set playlists variable to playlists received from server
-    for(var i = 0; i < playlists.length; i++){
-      $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
-    }
-    $("#go").click(function(){//start clean on click
-      $(this).css('display', 'none');
-      //find selected dropdown option
-      var dropdown = document.getElementsByTagName("select")[0];
-      var selected = dropdown.options[dropdown.selectedIndex];
-
-      //get tracks for selected playlist
-      var playlist = playlists[selected.getAttribute("data-id")];
-      $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
-        var page = data.tracks;
-        var tracks = page.items;
-
-        //function to add tracks beyond cap of 100
-        function nextTracks(offset){
-          $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
-            var page = data;//store new paging object
-            tracks = tracks.concat(page.items); //add tracks in next to original tracks array
-            if(page.next!=null){ //continue to do so until there are no more next paging objects
-              nextTracks(offset + 100)
-            }
-            else{ //if there are no more tracks, continue with creation
-              cont()
-            }
-          });
+    
+    function nextPlaylists(offset){
+      $.get(getURL('playlists', access)+"&offset="+offset, function(data){
+        playlists = playlists.concat(data.items);
+        if(data.next != null){
+          nextPlaylists(offset + 20);
         }
-
-        function cont(){//make and populate new playlist
-          $.get(getURL("create", access)+"&name="+playlist.name + " (Clean)", function(data){
-            var playlistID = data.id;
-            checkTrack(access, playlistID, tracks, 0);//begin loop through tracks
-          });
-        }
-
-        if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
-          nextTracks(100)
-        }
-        else{//otherwise continue with creation
-          cont()
+        else{
+          continueWithPlaylists(playlists);
         }
       })
-    })
+    }
+    function continueWithPlaylists(playlists){
+      for(var i = 0; i < playlists.length; i++){
+            $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
+          }
+      $("#go").click(function(){//start clean on click
+        $(this).css('display', 'none');
+        //find selected dropdown option
+        var dropdown = document.getElementsByTagName("select")[0];
+        var selected = dropdown.options[dropdown.selectedIndex];
+
+        //get tracks for selected playlist
+        var playlist = playlists[selected.getAttribute("data-id")];
+        $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
+          var page = data.tracks;
+          var tracks = page.items;
+          
+          //function to add tracks beyond cap of 100
+          function nextTracks(offset){
+            $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
+              var page = data;//store new paging object
+              tracks = tracks.concat(page.items); //add tracks in next to original tracks array
+              if(page.next!=null){ //continue to do so until there are no more next paging objects
+                nextTracks(offset + 100)
+              }
+              else{ //if there are no more tracks, continue with creation
+                cont()
+              }
+            });
+          }
+
+          function cont(){//make and populate new playlist
+            $.get(getURL("create", access)+"&name="+playlist.name + " (Clean)", function(data){
+              var playlistID = data.id;
+              checkTrack(access, playlistID, tracks, 0);//begin loop through tracks
+            });
+          }
+
+          if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
+            nextTracks(100)
+          }
+          else{//otherwise continue with creation
+            cont()
+          }
+        })
+      })
+    }
+    if(data.next != null){
+      nextPlaylists(20);
+    }
+    else{
+      continueWithPlaylists(playlists)
+    }
   });
 }
 
@@ -94,7 +114,7 @@ function checkTrack(access, playlistID, tracks, index){
         if(!cleanFound){
           $("#remove").append("<div class='remove'>"+track.name + "</div>");
           //TODO: cool animation of removal?
-          setTimeout(function(){checkTrack(access, playlistID, tracks,index+1)}, 50);
+          setTimeout(function(){checkTrack(access, playlistID, tracks,index+1)}, 100);
         }
       })
     }
@@ -105,14 +125,22 @@ function checkTrack(access, playlistID, tracks, index){
   else{
     //TODO: confirm buttons
     function toggleDisplay(){
+      $("#cancel").off('click');
+      $("#confirm").off('click');
       $("#go").css('display', 'block');
       $("#ui").css("display", 'none');
       $("#tracks").html("");
+      $("select").html("  <option selected disabled hidden>Choose Playlist</option><option>Using URI</option>");
+      $.get(getURL('playlists', access), function(data){
+        playlists = data.items; //set playlists variable to playlists received from server
+        for(var i = 0; i < playlists.length; i++){
+          $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
+        }
+      })
     }
     $("#ui").css("display", "block");
     $("#cancel").click(function(){
       toggleDisplay();
-      $(this).off('click');
       $.get(getURL("remove", access)+"&id=" + playlistID, function(){
         console.log("removed playlist")
       })
