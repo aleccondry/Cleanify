@@ -23,12 +23,26 @@
     <![endif]-->
     <style>
       .track {
-        background-color: black;
-        color:white;
+        background-color: white;
+        color:green;
         border-style: solid;
         border-color: white;
         border-width: 1px;
         text-align: left;
+        width: 50%
+        position:absolute;
+        left:25%;
+      }
+      .remove {
+        background-color: white;
+        color:red;
+        border-style: solid;
+        border-color: white;
+        border-width: 1px;
+        text-align: right;
+        width: 50%
+        position:absolute;
+        right:25%;
       }
     </style>
 </head>
@@ -73,6 +87,7 @@
                 <a class="btn btn-primary btn-lg go" id="go" role="button">Clean your playlist</a>
                 <p> </p>
                 <div id="tracks" style="height:200px;overflow:scroll;"></div>
+                <div id="remove" style="height:200px;overflow:scroll;"></div>
                 <div id="ui" style="display:none;">
                   <a class='btn btn-lg go' role='button' id='cancel'>Cancel</a>
                   <a class='btn btn-lg go' role='button' id='confirm'>Confirm</a>

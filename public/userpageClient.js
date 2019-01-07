@@ -24,7 +24,7 @@ window.onload = function(){
       $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
         var page = data.tracks;
         var tracks = page.items;
-        
+
         //function to add tracks beyond cap of 100
         function nextTracks(offset){
           $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
@@ -81,7 +81,7 @@ function checkTrack(access, playlistID, tracks, index){
       //get search with info as queries
       $.get(getURL("search", access)+"&name="+name+"&artist="+artist, function(data){
         var results = data.items;
-        
+
         //loop through search results for clean match
         var cleanFound = false;
         for(var i = 0; i < results.length; i++){
@@ -92,6 +92,7 @@ function checkTrack(access, playlistID, tracks, index){
           }
         }
         if(!cleanFound){
+          $("#remove").append("<div class='remove'>"+track.name + "</div>");
           //TODO: cool animation of removal?
           setTimeout(function(){checkTrack(access, playlistID, tracks,index+1)}, 50);
         }
