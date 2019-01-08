@@ -6,16 +6,16 @@ footer{
   background-color:#1E1E1E;
   color:#C1C3C6;
   position:absolute;
-  bottom:10%
+  bottom:10%;
 
 }
 .track {
-  background-color: white;
+  background-color: #dcddd9;
   color:green;
   border-style: solid;
   border-color: white;
   border-width: 1px;
-  text-align: left;
+  text-align: right;
 }
 #tracks, #remove {
   position:absolute;
@@ -27,12 +27,12 @@ footer{
   left:20%;
 }
 .remove {
-  background-color: white;
+  background-color: #dcddd9;
   color:red;
   border-style: solid;
   border-color: white;
   border-width: 1px;
-  text-align: right;
+  text-align: left;
 }
 #remove {
   width: 30%;
