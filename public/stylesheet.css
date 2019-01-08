@@ -1,0 +1,41 @@
+body{
+  background-color:#36393f;
+  color:#dcddd9;
+}
+footer{
+  background-color:#1E1E1E;
+  color:#C1C3C6;
+  position:absolute;
+  bottom:10%
+
+}
+.track {
+  background-color: white;
+  color:green;
+  border-style: solid;
+  border-color: white;
+  border-width: 1px;
+  text-align: left;
+}
+#tracks, #remove {
+  position:absolute;
+  top:45%;
+  display:none;
+}
+#tracks {
+  width:30%;
+  left:20%;
+}
+.remove {
+  background-color: white;
+  color:red;
+  border-style: solid;
+  border-color: white;
+  border-width: 1px;
+  text-align: right;
+}
+#remove {
+  width: 30%;
+  right:20%;
+  text-decoration: line-through;
+}
