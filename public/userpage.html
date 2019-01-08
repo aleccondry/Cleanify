@@ -29,9 +29,15 @@
         border-color: white;
         border-width: 1px;
         text-align: left;
-        width: 50%
+      }
+      #tracks, #remove {
         position:absolute;
-        left:25%;
+        top:45%;
+        display:none;
+      }
+      #tracks {
+        width:45%;
+        left:5%;
       }
       .remove {
         background-color: white;
@@ -40,9 +46,11 @@
         border-color: white;
         border-width: 1px;
         text-align: right;
-        width: 50%
-        position:absolute;
-        right:25%;
+      }
+      #remove {
+        width: 45%;
+        right:5%;
+        text-decoration: line-through;
       }
     </style>
 </head>
@@ -51,6 +59,7 @@
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="/">
+            <img src="images/cleanify.png" alt="cleanify logo" style="position:absolute;top:2.5%;left:3.5%;width:75px;height:75px;">
             <span style="font-family:'Montserrat', sans-serif;font-size:48px;position:relative;top:10px;">Clean<span style="color:#6fb044">ify</span></span>
             <!-- <span class="navbar-title" style="font-family:'Montserrat', sans-serif;">Clean Your Music</span> -->
           </a>
@@ -63,15 +72,15 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
       <div id='intro'>
-      <div id='main' class="top jumbotron jumbotron-hero container-fluid">
-          <div  class="container" id="jumbo-dialog">
-            <h1 id='ttitle' style="position:relative;top:10px;" >Clean your music</h1>
-            <p id='ttext'>
+      <div id='main' class="top jumbotron jumbotron-hero container-fluid" style="background:#36393f;">
+          <div  class="container" id="jumbo-dialog" style="height:500px;">
+            <h1 id='ttitle' style="color:#dcddd9;position:relative;top:10px;" >Clean your music</h1>
+            <p id='ttext' style="color:#dcddd9">
                 Select a playlist or enter playlist URI
             </p>
 
-            <div style="width: 100%;">
-<div class="align-center form-group">
+            <div style="width: 100%;height:80%">
+<div class="align-center form-group" style="height:100%;">
                 <div id="uri-prompt" class="input-group" style="width: 50%;left: 25%;">
                   <select style="width:300px;background-color:#FFFFFF;border: 0;outline: 1px solid #D3D3D3; outline-offset:-1px">
                     <option selected disabled hidden>Choose Playlist</option>
@@ -88,7 +97,7 @@
                 <p> </p>
                 <div id="tracks" style="height:200px;overflow:scroll;"></div>
                 <div id="remove" style="height:200px;overflow:scroll;"></div>
-                <div id="ui" style="display:none;">
+                <div id="ui" style="display:none;position:relative; top:50%;">
                   <a class='btn btn-lg go' role='button' id='cancel'>Cancel</a>
                   <a class='btn btn-lg go' role='button' id='confirm'>Confirm</a>
                 </div>

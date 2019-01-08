@@ -159,9 +159,22 @@ app.get('/addtrack', function(req, res){
   spotifyApi.setAccessToken(access);
     var playlistID = req.query.playlistid;
     var trackID = req.query.trackid;
+    function tryAgain(err){
+       console.log("couldn't add tracks", err)
+        //wait and try again 
+        setTimeout(function(){
+          spotifyApi.addTracksToPlaylist(playlistID, ["spotify:track:"+trackID]).then(function(data){
+            res.json(data.body);
+          }, function(err){tryAgain(err)})
+        }, 200)
+    }
     spotifyApi.addTracksToPlaylist(playlistID, ["spotify:track:"+trackID]).then(function(data){
       res.json(data.body);
-    }, function(err){console.log("couldn't add tracks", err)});
+    }, function(err){
+        if(err.statusCode == 500){
+          tryAgain(err);
+        }
+      });
 });
 
 app.get('/playlist', function(req, res){

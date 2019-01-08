@@ -57,6 +57,8 @@ window.onload = function(){
               var playlistID = data.id;
               checkTrack(access, playlistID, tracks, 0);//begin loop through tracks
             });
+            $("#tracks").show();
+            $("#remove").show();
           }
 
           if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
@@ -129,7 +131,9 @@ function checkTrack(access, playlistID, tracks, index){
       $("#confirm").off('click');
       $("#go").css('display', 'block');
       $("#ui").css("display", 'none');
-      $("#tracks").html("");
+      $("#tracks").html("").css("display", "none");
+      $("#remove").html("").css("display", "none");
+
       $("select").html("  <option selected disabled hidden>Choose Playlist</option><option>Using URI</option>");
       $.get(getURL('playlists', access), function(data){
         playlists = data.items; //set playlists variable to playlists received from server
@@ -138,6 +142,7 @@ function checkTrack(access, playlistID, tracks, index){
         }
       })
     }
+
     $("#ui").css("display", "block");
     $("#cancel").click(function(){
       toggleDisplay();
