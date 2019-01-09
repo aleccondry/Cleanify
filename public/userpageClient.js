@@ -124,12 +124,17 @@ function pageFunction(access){
           console.log("using uri");
           var playlist_entered = document.getElementById("uri-text").value;
           var array = playlist.split(":");
-          var id = arr[2];
-          var playlist_id = arr[4];
-          $.get(getURL("playlistByURI", access)+"&playlist_id="+playlist_id+"&id="+id, function(data){
-            var page = data.tracks;
-            var tracks = page.items;
-          })}
+          var id = array[2];
+          var playlist_id = array[4];
+          if (id != null || playlist_id != null){
+              $.get(getURL("playlistByURI", access)+"&playlist_id="+playlist_id+"&id="+id, function(data){
+                var page = data.tracks;
+                var tracks = page.items;
+            })
+          } else {
+              console.log("not valid playlist uri");
+          }
+        }
         //get tracks for selected playlist
         var playlist = playlists[selected.getAttribute("data-id")];
         $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
