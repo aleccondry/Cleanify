@@ -86,11 +86,16 @@ function checkTrack(access, playlistID, tracks, index){
     function addTrack(track){
       var id = track.id;
       $.get(getURL("addtrack", access)+"&trackid="+id+"&playlistid="+playlistID, function(data){
-       var div = $("#tracks")[0];
-       var shouldScroll = (div.scrollHeight - div.scrollTop < 220);
+       var divTracks = $("#tracks")[0];
+       var tracksShouldChange = (divTracks.scrollHeight - divTracks.scrollTop < 220);
+       var divRemove = $("#remove")[0];
+       var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 220);
        $("#tracks").append("<div class='track'>"+track.name + "</div>");
-       if(shouldScroll){
-         div.scrollTop = div.scrollHeight;
+       if(tracksShouldChange){
+         divTracks.scrollTop = divTracks.scrollHeight;
+       }
+       if(removeShouldChange){
+         divRemove.scrollTop = divRemove.scrollHeight;
        }
        //wait before moving on to next track to avoid internal server errors
        setTimeout(function(){checkTrack(access, playlistID, tracks, index+1)}, 100);
@@ -107,7 +112,7 @@ function checkTrack(access, playlistID, tracks, index){
         //loop through search results for clean match
         var cleanFound = false;
         for(var i = 0; i < results.length; i++){
-          if(!results[i].explicit && results[i].name == name && results[i].artists[0].name == artist){//if clean match, add to new playlist
+          if(!results[i].explicit && trackEquals(name, results[i].name, artist, results[i].artists[0].name)){//if clean match, add to new playlist
             addTrack(results[i])
             cleanFound = true;
             break;
@@ -158,4 +163,8 @@ function checkTrack(access, playlistID, tracks, index){
 
 function getURL(program, access){
   return "http://cleanify.mooo.com/"+program + "?u="+access;
+}
+
+function trackEquals(trackName, resultName, artistName, resultArtist){
+  return ((trackName.includes(resultName) || resultName.includes(trackName)) && artistName == resultArtist);
 }
