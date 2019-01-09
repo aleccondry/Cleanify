@@ -1,82 +1,14 @@
 //userpage client gets user data and displays it
 window.onload = function(){
-  //playlists object
-  var playlists;
-
+  //fire line animation
+  $(".line").animate({width: "80%"}, 2000);
+  
   //get access token from url
   const urlParams = new URLSearchParams(window.location.search);
   const access = urlParams.get('u');
   
-  //get playlists
-  $.get(getURL("playlists", access)+"&offset=0", function(data){
-    playlists = data.items; //set playlists variable to playlists received from server
-    
-    function nextPlaylists(offset){
-      $.get(getURL('playlists', access)+"&offset="+offset, function(data){
-        playlists = playlists.concat(data.items);
-        if(data.next != null){
-          nextPlaylists(offset + 20);
-        }
-        else{
-          continueWithPlaylists(playlists);
-        }
-      })
-    }
-    function continueWithPlaylists(playlists){
-      for(var i = 0; i < playlists.length; i++){
-            $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
-          }
-      $("#go").click(function(){//start clean on click
-        $(this).css('display', 'none');
-        //find selected dropdown option
-        var dropdown = document.getElementsByTagName("select")[0];
-        var selected = dropdown.options[dropdown.selectedIndex];
+  pageFunction(access)
 
-        //get tracks for selected playlist
-        var playlist = playlists[selected.getAttribute("data-id")];
-        $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
-          var page = data.tracks;
-          var tracks = page.items;
-          
-          //function to add tracks beyond cap of 100
-          function nextTracks(offset){
-            $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
-              var page = data;//store new paging object
-              tracks = tracks.concat(page.items); //add tracks in next to original tracks array
-              if(page.next!=null){ //continue to do so until there are no more next paging objects
-                nextTracks(offset + 100)
-              }
-              else{ //if there are no more tracks, continue with creation
-                cont()
-              }
-            });
-          }
-
-          function cont(){//make and populate new playlist
-            $.get(getURL("create", access)+"&name="+playlist.name + " (Clean)", function(data){
-              var playlistID = data.id;
-              checkTrack(access, playlistID, tracks, 0);//begin loop through tracks
-            });
-            $("#tracks").show();
-            $("#remove").show();
-          }
-
-          if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
-            nextTracks(100)
-          }
-          else{//otherwise continue with creation
-            cont()
-          }
-        })
-      })
-    }
-    if(data.next != null){
-      nextPlaylists(20);
-    }
-    else{
-      continueWithPlaylists(playlists)
-    }
-  });
 }
 
 function checkTrack(access, playlistID, tracks, index){
@@ -90,7 +22,7 @@ function checkTrack(access, playlistID, tracks, index){
        var tracksShouldChange = (divTracks.scrollHeight - divTracks.scrollTop < 220);
        var divRemove = $("#remove")[0];
        var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 220);
-       $("#tracks").append("<div class='track'>"+track.name + "</div>");
+       $("#tracks").append("<div class='track'>"+track.name + "<a class='btn-primary button go'>Remove</a></div>");
        if(tracksShouldChange){
          divTracks.scrollTop = divTracks.scrollHeight;
        }
@@ -140,14 +72,8 @@ function checkTrack(access, playlistID, tracks, index){
       $("#remove").html("").css("display", "none");
 
       $("select").html("  <option selected disabled hidden>Choose Playlist</option><option>Using URI</option>");
-      $.get(getURL('playlists', access), function(data){
-        playlists = data.items; //set playlists variable to playlists received from server
-        for(var i = 0; i < playlists.length; i++){
-          $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
-        }
-      })
+      pageFunction(access)
     }
-
     $("#ui").css("display", "block");
     $("#cancel").click(function(){
       toggleDisplay();
@@ -167,4 +93,77 @@ function getURL(program, access){
 
 function trackEquals(trackName, resultName, artistName, resultArtist){
   return ((trackName.includes(resultName) || resultName.includes(trackName)) && artistName == resultArtist);
+}
+
+function pageFunction(access){
+  //get playlists
+  $.get(getURL("playlists", access)+"&offset=0", function(data){
+    playlists = data.items; //set playlists variable to playlists received from server
+    
+    function nextPlaylists(offset){
+      $.get(getURL('playlists', access)+"&offset="+offset, function(data){
+        playlists = playlists.concat(data.items);
+        if(data.next != null){
+          nextPlaylists(offset + 20);
+        }
+        else{
+          continueWithPlaylists(playlists);
+        }
+      })
+    }
+    function continueWithPlaylists(playlists){
+      for(var i = 0; i < playlists.length; i++){
+            $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
+          }
+      $("#go").click(function(){//start clean on click
+        $(this).css('display', 'none').off('click');
+        //find selected dropdown option
+        var dropdown = document.getElementsByTagName("select")[0];
+        var selected = dropdown.options[dropdown.selectedIndex];
+
+        //get tracks for selected playlist
+        var playlist = playlists[selected.getAttribute("data-id")];
+        $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
+          var page = data.tracks;
+          var tracks = page.items;
+          
+          //function to add tracks beyond cap of 100
+          function nextTracks(offset){
+            $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
+              var page = data;//store new paging object
+              tracks = tracks.concat(page.items); //add tracks in next to original tracks array
+              if(page.next!=null){ //continue to do so until there are no more next paging objects
+                nextTracks(offset + 100)
+              }
+              else{ //if there are no more tracks, continue with creation
+                cont()
+              }
+            });
+          }
+
+          function cont(){//make and populate new playlist
+            $.get(getURL("create", access)+"&name="+playlist.name + " (Clean)", function(data){
+              var playlistID = data.id;
+              checkTrack(access, playlistID, tracks, 0);//begin loop through tracks
+            });
+            $("#tracks").show();
+            $("#remove").show();
+          }
+
+          if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
+            nextTracks(100)
+          }
+          else{//otherwise continue with creation
+            cont()
+          }
+        })
+      })
+    }
+    if(data.next != null){
+      nextPlaylists(20);
+    }
+    else{
+      continueWithPlaylists(playlists)
+    }
+  });
 }
