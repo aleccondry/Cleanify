@@ -129,6 +129,15 @@ app.get('/playlists', function(req, res){
   }, function(err){console.log("failed to get user id", err);}).catch(function(){console.log("getMe promise rejected");});
 });
 
+app.get('/playlistByURI', function(req, res){
+  console.log("getting playlists by uri");
+  var id = req.query.id;
+  var playlist_id = req.query.playlist_id;
+  spotifyApi.getPlaylist(id, playlist_id).then(function(data){
+    res.json(data.body);
+  }, function(err){console.log("failed to get playlist")});
+});
+
 //HTTP Request Methods
 app.get('/search', function(req, res){
     var name = req.query.name;
@@ -161,7 +170,7 @@ app.get('/addtrack', function(req, res){
     var trackID = req.query.trackid;
     function tryAgain(err){
        console.log("couldn't add tracks", err)
-        //wait and try again 
+        //wait and try again
         setTimeout(function(){
           spotifyApi.addTracksToPlaylist(playlistID, ["spotify:track:"+trackID]).then(function(data){
             res.json(data.body);

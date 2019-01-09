@@ -2,11 +2,11 @@
 window.onload = function(){
   //fire line animation
   $(".line").animate({width: "80%"}, 2000);
-  
+
   //get access token from url
   const urlParams = new URLSearchParams(window.location.search);
   const access = urlParams.get('u');
-  
+
   pageFunction(access)
 
 }
@@ -99,7 +99,7 @@ function pageFunction(access){
   //get playlists
   $.get(getURL("playlists", access)+"&offset=0", function(data){
     playlists = data.items; //set playlists variable to playlists received from server
-    
+
     function nextPlaylists(offset){
       $.get(getURL('playlists', access)+"&offset="+offset, function(data){
         playlists = playlists.concat(data.items);
@@ -120,13 +120,22 @@ function pageFunction(access){
         //find selected dropdown option
         var dropdown = document.getElementsByTagName("select")[0];
         var selected = dropdown.options[dropdown.selectedIndex];
-
+        if (dropdown.selectedIndex = 0){
+          console.log("using uri");
+          var playlist_entered = document.getElementById("uri-text").value;
+          var array = playlist.split(":");
+          var id = arr[2];
+          var playlist_id = arr[4];
+          $.get(getURL("playlistByURI", access)+"&playlist_id="+playlist_id+"&id="+id, function(data){
+            var page = data.tracks;
+            var tracks = page.items;
+          })}
         //get tracks for selected playlist
         var playlist = playlists[selected.getAttribute("data-id")];
         $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
           var page = data.tracks;
           var tracks = page.items;
-          
+
           //function to add tracks beyond cap of 100
           function nextTracks(offset){
             $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
