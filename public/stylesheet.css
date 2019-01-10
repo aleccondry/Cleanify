@@ -2,6 +2,10 @@ html, body,#intro{
     height: 100%;
 }
 
+html {
+    overflow: hidden;
+}
+
 body {
     background-color: #3c3f44;
 }
@@ -31,37 +35,37 @@ footer{
   bottom:10%;
   background-color:
 }
-.track {
+
+.track, .remove {
   background-color: #dcddd9;
-  color:green;
-  border-style: solid;
   border-color: white;
   border-width: 1px;
-  text-align: left;
+  border-style: solid;
   position:relative;
+  width:80%
+}
+.track {
+  color:green;
+  text-align: left;
   left:20%;
 }
 #tracks, #remove {
   position:absolute;
   top:45%;
   display:none;
+  overflow-y: scroll;
+  width:50%;
 }
 #tracks {
-  width:50%;
   left:0%;
 }
 .remove {
-  background-color: #dcddd9;
   color:red;
-  border-style: solid;
-  border-color: white;
-  border-width: 1px;
   text-align: right;
+  left:0;
 }
 #remove {
-  width: 30%;
-  right:20%;
-  text-decoration: line-through;
+  right:0%;
 }
 
 #ttitle {
@@ -74,7 +78,12 @@ footer{
     padding-right: 5px;
     cursor: pointer;
     position:absolute;
-    left:-15%;
     display:none;
     top: 0;
+    right:0;
+}
+
+.container {
+    margin-left: 117px;
+    margin-right: 117px;
 }

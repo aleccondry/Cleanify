@@ -21,8 +21,8 @@ function checkTrack(access, playlistID, tracks, index){
        var divTracks = $("#tracks")[0];
        var tracksShouldChange = (divTracks.scrollHeight - divTracks.scrollTop < 220);
        var divRemove = $("#remove")[0];
-       var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 220);
-       $("#tracks").append("<div class='track'>"+track.name + "<a class='btn-primary button go'>Remove</a></div>");
+       var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 520);
+       $("#tracks").append("<div id='track-"+id+"' class='track'>"+track.name + "<a class='btn-primary button go' id=rm-"+id+">Remove</a></div>");
        if(tracksShouldChange){
          divTracks.scrollTop = divTracks.scrollHeight;
        }
@@ -75,6 +75,12 @@ function checkTrack(access, playlistID, tracks, index){
       pageFunction(access)
     }
     $("#ui").css("display", "block");
+    $(".track").on('mouseenter', function(){
+      $("#rm-"+$(this).attr('id').split("-")[1]).show();
+    }) 
+    $(".track").on('mouseleave', function(){
+      $("#rm-"+$(this).attr('id').split("-")[1]).hide();
+    })
     $("#cancel").click(function(){
       toggleDisplay();
       $.get(getURL("remove", access)+"&id=" + playlistID, function(){
