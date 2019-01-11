@@ -144,7 +144,7 @@ function pageFunction(access){
         $("#loading").show();
         //find selected dropdown option
         var dropdown = document.getElementsByTagName("select")[0];
-        var selected = dropdown.options[dropdown.selectedId];
+        var selected = dropdown.options[dropdown.selectedIndex];
         if (dropdown.selectedIndex == 1){
           console.log("using uri");
           var playlist_entered = document.getElementById("uri-text").value;
