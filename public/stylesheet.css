@@ -49,6 +49,11 @@ footer{
   text-align: left;
   left:20%;
 }
+
+.cleaned {
+    color: blue;
+}
+
 #tracks, #remove {
   position:absolute;
   top:45%;
@@ -61,7 +66,7 @@ footer{
 }
 .remove {
   color:red;
-  text-align: right;
+  text-align: left;
   left:0;
 }
 #remove {
@@ -86,4 +91,8 @@ footer{
 .container {
     margin-left: 117px;
     margin-right: 117px;
+}
+
+#uri-text {
+    display: none;
 }

@@ -1,5 +1,15 @@
 //userpage client gets user data and displays it
 window.onload = function(){
+  //Select change listener
+  $("select").on('change', function(){
+      if($(this)[0].selectedIndex == 1){
+        $("#uri-text").slideDown(500)
+      }
+      else{
+        $("#uri-text").slideUp(500)
+      }
+  })
+
   //fire line animation
   $(".line").animate({width: "80%"}, 2000);
 
@@ -12,30 +22,28 @@ window.onload = function(){
 }
 
 function checkTrack(access, playlistID, tracks, index){
+  $(".line").animate({width: (index/tracks.length * 100)+"%"}, 100);
   if(index < tracks.length){
     var track = tracks[index].track;
     //add track function
-    function addTrack(track){
+    function addTrack(track, cleaned){
       var id = track.id;
       $.get(getURL("addtrack", access)+"&trackid="+id+"&playlistid="+playlistID, function(data){
        var divTracks = $("#tracks")[0];
        var tracksShouldChange = (divTracks.scrollHeight - divTracks.scrollTop < 220);
-       var divRemove = $("#remove")[0];
-       var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 520);
-       $("#tracks").append("<div id='track-"+id+"' class='track'>"+track.name + "<a class='btn-primary button go' id=rm-"+id+">Remove</a></div>");
+              var cleanClass = (cleaned)?"cleaned":"";
+       $("#tracks").append("<div id='track-"+id+"' class='track "+cleanClass+"'>"+track.name + "<a class='btn-primary button go' id=rm-"+id+">Edit</a></div>");
        if(tracksShouldChange){
          divTracks.scrollTop = divTracks.scrollHeight;
        }
-       if(removeShouldChange){
-         divRemove.scrollTop = divRemove.scrollHeight;
-       }
+       
        //wait before moving on to next track to avoid internal server errors
        setTimeout(function(){checkTrack(access, playlistID, tracks, index+1)}, 100);
       })
     }
 
     if(track.explicit){//if track is explicit, search for clean versions on backend
-      var name = track.name;
+      var name = track.name.clean();
       var artist = track.artists[0].name;
       //get search with info as queries
       $.get(getURL("search", access)+"&name="+name+"&artist="+artist, function(data){
@@ -45,13 +53,18 @@ function checkTrack(access, playlistID, tracks, index){
         var cleanFound = false;
         for(var i = 0; i < results.length; i++){
           if(!results[i].explicit && trackEquals(name, results[i].name, artist, results[i].artists[0].name)){//if clean match, add to new playlist
-            addTrack(results[i])
+            addTrack(results[i], true)
             cleanFound = true;
             break;
           }
         }
         if(!cleanFound){
           $("#remove").append("<div class='remove'>"+track.name + "</div>");
+          var divRemove = $("#remove")[0];
+          var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 220);
+          if(removeShouldChange){
+             divRemove.scrollTop = divRemove.scrollHeight;
+           }
           //TODO: cool animation of removal?
           setTimeout(function(){checkTrack(access, playlistID, tracks,index+1)}, 100);
         }
@@ -64,6 +77,7 @@ function checkTrack(access, playlistID, tracks, index){
   else{
     //TODO: confirm buttons
     function toggleDisplay(){
+      $(".line").animate({width: "80%"}, 200);
       $("#cancel").off('click');
       $("#confirm").off('click');
       $("#go").css('display', 'block');
@@ -98,6 +112,10 @@ function getURL(program, access){
 }
 
 function trackEquals(trackName, resultName, artistName, resultArtist){
+  trackName = trackName.clean();
+  resultName = resultName.clean();
+  artistName = artistName.clean();
+  resultArtist = resultArtist.clean();
   return ((trackName.includes(resultName) || resultName.includes(trackName)) && artistName == resultArtist);
 }
 
@@ -125,28 +143,35 @@ function pageFunction(access){
         $(this).css('display', 'none').off('click');
         //find selected dropdown option
         var dropdown = document.getElementsByTagName("select")[0];
-        var selected = dropdown.options[dropdown.selectedIndex];
-        if (dropdown.selectedIndex = 0){
+        var selected = dropdown.options[dropdown.selectedId];
+        if (dropdown.selectedIndex == 1){
           console.log("using uri");
           var playlist_entered = document.getElementById("uri-text").value;
-          var array = playlist.split(":");
+          var array = playlist_entered.split(":");
           var id = array[2];
           var playlist_id = array[4];
           if (id != null || playlist_id != null){
               $.get(getURL("playlistByURI", access)+"&playlist_id="+playlist_id+"&id="+id, function(data){
                 var page = data.tracks;
                 var tracks = page.items;
+                usePlaylist(page, tracks, data);
+                
             })
           } else {
               console.log("not valid playlist uri");
           }
         }
-        //get tracks for selected playlist
-        var playlist = playlists[selected.getAttribute("data-id")];
-        $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
-          var page = data.tracks;
-          var tracks = page.items;
+        else{
+          //get tracks for selected playlist
+          var playlist = playlists[selected.getAttribute("data-id")];
+          $.get(getURL("playlist", access)+"&id="+playlist.id, function(data){
+            var page = data.tracks;
+            var tracks = page.items;
+            usePlaylist(page, tracks, data);
 
+          })
+        }
+        function usePlaylist(page, tracks, playlist){
           //function to add tracks beyond cap of 100
           function nextTracks(offset){
             $.get(getURL('tracks', access)+"&id="+playlist.id+"&offset="+offset, function(data){//get next paging object
@@ -176,7 +201,7 @@ function pageFunction(access){
           else{//otherwise continue with creation
             cont()
           }
-        })
+        }
       })
     }
     if(data.next != null){
@@ -186,4 +211,12 @@ function pageFunction(access){
       continueWithPlaylists(playlists)
     }
   });
+}
+
+function search(name, artist, callback){
+  $.get(getURL('search')+'&name='+name+'&artist='+artist, function(data){callback(data)})
+}
+
+String.prototype.clean = function(){
+  return this.toLowerCase().replace("'", "");
 }

@@ -115,6 +115,7 @@ app.get('/callback', function(req, res){
 });
 
 
+//HTTP Request Methods
 app.get('/playlists', function(req, res){
   var access = req.query.u;
   var offset = req.query.offset;
@@ -133,12 +134,11 @@ app.get('/playlistByURI', function(req, res){
   console.log("getting playlists by uri");
   var id = req.query.id;
   var playlist_id = req.query.playlist_id;
-  spotifyApi.getPlaylist(id, playlist_id).then(function(data){
+  spotifyApi.getPlaylist(/*id,*/playlist_id).then(function(data){
     res.json(data.body);
-  }, function(err){console.log("failed to get playlist")});
+  }, function(err){console.log("failed to get playlist by uri")});
 });
 
-//HTTP Request Methods
 app.get('/search', function(req, res){
     var name = req.query.name;
     var artist = req.query.artist;
