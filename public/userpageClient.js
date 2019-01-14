@@ -36,7 +36,7 @@ function checkTrack(access, playlistID, tracks, index){
        if(tracksShouldChange){
          divTracks.scrollTop = divTracks.scrollHeight;
        }
-       
+
        //wait before moving on to next track to avoid internal server errors
        setTimeout(function(){checkTrack(access, playlistID, tracks, index+1)}, 100);
       })
@@ -91,7 +91,7 @@ function checkTrack(access, playlistID, tracks, index){
     $("#ui").css("display", "block");
     $(".track").on('mouseenter', function(){
       $("#rm-"+$(this).attr('id').split("-")[1]).show();
-    }) 
+    })
     $(".track").on('mouseleave', function(){
       $("#rm-"+$(this).attr('id').split("-")[1]).hide();
     })
@@ -141,6 +141,7 @@ function pageFunction(access){
           }
       $("#go").click(function(){//start clean on click
         $(this).css('display', 'none').off('click');
+        $("#loading").show();
         //find selected dropdown option
         var dropdown = document.getElementsByTagName("select")[0];
         var selected = dropdown.options[dropdown.selectedId];
@@ -155,7 +156,7 @@ function pageFunction(access){
                 var page = data.tracks;
                 var tracks = page.items;
                 usePlaylist(page, tracks, data);
-                
+
             })
           } else {
               console.log("not valid playlist uri");
@@ -193,6 +194,7 @@ function pageFunction(access){
             });
             $("#tracks").show();
             $("#remove").show();
+            $("#loading").hide();
           }
 
           if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
