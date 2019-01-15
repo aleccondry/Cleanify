@@ -13,7 +13,12 @@ body {
 #main{
   background-color:#36393f;
   color:#dcddd9;
-  height:90%
+  height:90%;
+  padding-top: 48px;
+}
+
+#navbar {
+  min-height: 80px;
 }
 
 /*body, footer {
