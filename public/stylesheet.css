@@ -148,3 +148,10 @@ footer{
     width: 1.25em;
   }
 }
+.textModule {
+    background:white;
+    margin: 0 auto;
+    width:100px;
+    height:100px;
+    border-style:solid;
+}

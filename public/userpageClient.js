@@ -32,7 +32,7 @@ function checkTrack(access, playlistID, tracks, index){
        var divTracks = $("#tracks")[0];
        var tracksShouldChange = (divTracks.scrollHeight - divTracks.scrollTop < 220);
               var cleanClass = (cleaned)?"cleaned":"";
-       $("#tracks").append("<div id='track-"+id+"' class='track "+cleanClass+"'>"+track.name + "<a class='btn-primary button go' id=rm-"+id+">Edit</a></div>");
+       $("#tracks").append("<div id='track-"+id+"' class='track "+cleanClass+"'>"+track.name + "<a class='btn-primary button go edit' id=edit-"+id+">Edit</a></div>");
        if(tracksShouldChange){
          divTracks.scrollTop = divTracks.scrollHeight;
        }
@@ -78,6 +78,7 @@ function checkTrack(access, playlistID, tracks, index){
     //TODO: confirm buttons
     function toggleDisplay(){
       $(".line").animate({width: "80%"}, 200);
+      $('.edit').off('click');
       $("#cancel").off('click');
       $("#confirm").off('click');
       $("#go").css('display', 'block');
@@ -90,10 +91,17 @@ function checkTrack(access, playlistID, tracks, index){
     }
     $("#ui").css("display", "block");
     $(".track").on('mouseenter', function(){
-      $("#rm-"+$(this).attr('id').split("-")[1]).show();
-    })
+      $("#edit-"+$(this).attr('id').split("-")[1]).show();
+    }) 
     $(".track").on('mouseleave', function(){
-      $("#rm-"+$(this).attr('id').split("-")[1]).hide();
+      $("#edit-"+$(this).attr('id').split("-")[1]).hide();
+    })
+    $(".edit").on('click', function(){
+      var parentDiv = $(this)[0];
+      var lineDivs = [
+        {"tag": "h1", "styles": {"color": "green"}, "text":parentDiv.id}
+      ]
+      var module = new TextModule(document.getElementById("jumbo-dialog"), lineDivs).element;
     })
     $("#cancel").click(function(){
       toggleDisplay();
