@@ -75,7 +75,6 @@ function checkTrack(access, playlistID, tracks, index){
     }
   }
   else{
-    //TODO: confirm buttons
     function toggleDisplay(){
       $(".line").animate({width: "80%"}, 200);
       $('.edit').off('click');
@@ -85,11 +84,14 @@ function checkTrack(access, playlistID, tracks, index){
       $("#ui").css("display", 'none');
       $("#tracks").html("").css("display", "none");
       $("#remove").html("").css("display", "none");
-      $("#loading").html("").css("display", "none");
+      $("select")[0].disabled = false;
       $("select").html("  <option selected disabled hidden>Choose Playlist</option><option>Using URI</option>");
       pageFunction(access)
     }
-    $("#ui").css("display", "block");
+
+    //show UI
+    $(".loading").slideUp(2000);
+    $("#ui").fadeIn(2000);
     $(".track").on('mouseenter', function(){
       $("#edit-"+$(this).attr('id').split("-")[1]).show();
     }) 
@@ -148,6 +150,8 @@ function pageFunction(access){
             $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
           }
       $("#go").click(function(){//start clean on click
+        $(".loading").slideDown(500);
+        $("select")[0].disabled = true;
         $(this).css('display', 'none').off('click');
         $("#loading").show();
         //find selected dropdown option
@@ -202,7 +206,6 @@ function pageFunction(access){
             });
             $("#tracks").show();
             $("#remove").show();
-            $("#loading").hide();
           }
 
           if(page.next != null){//if there are more tracks, call next tracks and begin looping pages
