@@ -43,7 +43,7 @@ footer{
 
 .track, .remove {
   background-color: #dcddd9;
-  border-color: white;
+  border-color: #3c3f44;
   border-width: 1px;
   border-style: solid;
   position:relative;
@@ -103,7 +103,13 @@ footer{
 }
 
 .loading {
-  color:#00e054
+  color:#00e054;
+  font-size: 40px;
+  text-align: left;
+  height: 50px;
+  width: 200px;
+  position: absolute;
+  right: 43%;
 }
 
 .loading:after {
@@ -113,7 +119,7 @@ footer{
   -webkit-animation: ellipsis steps(4,end) 900ms infinite;
   animation: ellipsis steps(4,end) 900ms infinite;
   content: "\2026"; /* ascii code for the ellipsis character */
-  width: 0px;
+  width: 10px;
 }
 
 @keyframes ellipsis {

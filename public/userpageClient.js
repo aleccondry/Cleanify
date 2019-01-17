@@ -84,7 +84,7 @@ function checkTrack(access, playlistID, tracks, index){
       $("#ui").css("display", 'none');
       $("#tracks").html("").css("display", "none");
       $("#remove").html("").css("display", "none");
-
+      $("#loading").html("").css("display", "none");
       $("select").html("  <option selected disabled hidden>Choose Playlist</option><option>Using URI</option>");
       pageFunction(access)
     }
