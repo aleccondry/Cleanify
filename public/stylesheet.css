@@ -102,7 +102,10 @@ footer{
     padding-left: 5px;
     padding-right: 5px;
     cursor: pointer;
-    position:absolute;
+}
+
+.edit {
+     position:absolute;
     display:none;
     top: 0;
     right:0;
@@ -117,6 +120,21 @@ footer{
     display: none;
 }
 
+#labels {
+    margin: 0 auto;
+    display:none;
+}
+
+.table-name {
+    display: inline;
+    font-weight: 500;
+    padding-left: 12.5%;
+    padding-right: 12.5%;
+    font-size: 36px;
+    color: #dcddd9;
+    font-family: Circular;
+}
+
 .loading {
   color:#00e054;
   font-size: 40px;
@@ -124,6 +142,7 @@ footer{
   height: 50px;
   width: 200px;
   position: absolute;
+  top: 30%;
   right: 43%;
   display: none;
 }
@@ -150,9 +169,95 @@ footer{
   }
 }
 .textModule {
-    background:white;
+    display:none;
+    padding: 5px;
+    position: relative;
+    top: -79%;
+    opacity: .96;
+    width: 80%;
+    text-align:center;
+    background:#000000;
+    border-radius: 50px;
+    border-width: 2px;
+    border-color: #88d965;
     margin: 0 auto;
-    width:100px;
-    height:100px;
+    height:500px;
     border-style:solid;
+}
+
+.textModule:hover {
+    background: #060606;
+    border-width: 5px;
+}
+
+.modBtn {
+    padding: 1% 8%;
+    display: inline;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 2%;
+}
+
+.modInterface {
+    color: white;
+    width: 90%;
+    margin: 5% auto;
+    height: 50%;
+    overflow: scroll;
+}
+
+.modTrack {
+    width: 100%;
+    border-style: solid;
+    border-color: #5a5a5a;
+    border-width: 1px;
+    position:relative;
+}
+
+.modTrackComp {
+    overflow-x: scroll;
+    width: 30%;
+    margin-right: 3%;
+    display: table-cell;
+}
+
+.modOverlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top:0;
+    background:black;
+    opacity: .95;
+    display:none;
+    color: #88d965;
+}
+
+#go {
+    width: 20em;
+    margin: 0 auto;
+}
+
+select {
+    width: 300px;
+}
+
+.flag {
+    right: 10px;
+    position: absolute;
+    color: red;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+@media only screen and (max-width: 720px){
+    select {
+        width: auto;
+    }
+    .table-name {
+        font-size: 18px;
+    }
+    #cancel, #confirm {
+        font-size: 14px;
+    }
 }

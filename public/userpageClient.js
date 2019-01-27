@@ -21,7 +21,7 @@ window.onload = function(){
 
 }
 
-function checkTrack(access, playlistID, tracks, index){
+function checkTrack(access, playlistID, tracks, index, numAdded){
   $(".line").animate({width: (index/tracks.length * 100)+"%"}, 100);
   if(index < tracks.length){
     var track = tracks[index].track;
@@ -32,13 +32,14 @@ function checkTrack(access, playlistID, tracks, index){
        var divTracks = $("#tracks")[0];
        var tracksShouldChange = (divTracks.scrollHeight - divTracks.scrollTop < 220);
               var cleanClass = (cleaned)?"cleaned":"";
-       $("#tracks").append("<div id='track-"+id+"' class='track "+cleanClass+"'>"+track.name + "<a class='btn-primary button go edit' id=edit-"+id+">Edit</a></div>");
+       $("#tracks").append("<div id='track-"+numAdded+"' track='"+id+"' class='track "+cleanClass+"'>"+track.name + "<a class='btn-primary button go edit' id=edit-"+numAdded+" track='"+id+"'>Edit</a></div>");
+        numAdded++;
        if(tracksShouldChange){
          divTracks.scrollTop = divTracks.scrollHeight;
        }
 
        //wait before moving on to next track to avoid internal server errors
-       setTimeout(function(){checkTrack(access, playlistID, tracks, index+1)}, 100);
+       setTimeout(function(){checkTrack(access, playlistID, tracks, index+1, numAdded)}, 10);
       })
     }
 
@@ -51,14 +52,20 @@ function checkTrack(access, playlistID, tracks, index){
 
         //loop through search results for clean match
         var cleanFound = false;
-        for(var i = 0; i < results.length; i++){
-          if(!results[i].explicit && trackEquals(name, results[i].name, artist, results[i].artists[0].name)){//if clean match, add to new playlist
-            addTrack(results[i], true)
-            cleanFound = true;
-            break;
+        function loopTracks(contains){
+          for(var i = 0; i < results.length; i++){
+            if(!results[i].explicit && trackEquals(contains, name, results[i].name, artist, results[i].artists[0].name)){//if clean match, add to new playlist
+              addTrack(results[i], true)
+              cleanFound = true;
+              break;
+            }
           }
         }
-        if(!cleanFound){
+        loopTracks(false);//check for exact matches
+        if(!cleanFound){//if none, check for tracks that include the name
+          loopTracks(true);
+        }
+        if(!cleanFound){//if still not found, remove from playlist
           $("#remove").append("<div class='remove'>"+track.name + "</div>");
           var divRemove = $("#remove")[0];
           var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 220);
@@ -66,7 +73,7 @@ function checkTrack(access, playlistID, tracks, index){
              divRemove.scrollTop = divRemove.scrollHeight;
            }
           //TODO: cool animation of removal?
-          setTimeout(function(){checkTrack(access, playlistID, tracks,index+1)}, 100);
+          setTimeout(function(){checkTrack(access, playlistID, tracks,index+1, numAdded)}, 100);
         }
       })
     }
@@ -80,6 +87,7 @@ function checkTrack(access, playlistID, tracks, index){
       $('.edit').off('click');
       $("#cancel").off('click');
       $("#confirm").off('click');
+      $("#labels").slideUp(500);
       $("#go").css('display', 'block');
       $("#ui").css("display", 'none');
       $("#tracks").html("").css("display", "none");
@@ -90,7 +98,7 @@ function checkTrack(access, playlistID, tracks, index){
     }
 
     //show UI
-    $(".loading").slideUp(2000);
+    //$(".loading").slideUp(2000);
     $("#ui").fadeIn(2000);
     $(".track").on('mouseenter', function(){
       $("#edit-"+$(this).attr('id').split("-")[1]).show();
@@ -100,11 +108,53 @@ function checkTrack(access, playlistID, tracks, index){
     })
     $(".edit").on('click', function(){
       var parentDiv = $(this)[0];
-      var lineDivs = [
-        {"tag": "h1", "styles": {"color": "green"}, "text":parentDiv.id}
-      ]
-      var module = new TextModule(document.getElementById("jumbo-dialog"), lineDivs).element;
-    })
+      var position = $(this).attr('id').replace('edit-', '');
+      var id = $(this).attr('track');
+      getTrack(id, function(data){
+        var artistText = data.artists[0].name;
+        for(var x = 1; x < data.artists.length; x++){
+          artistText += ", " + data.artists[x].name;
+        }
+        var lineDivs = [
+          {"tag": "h3", "id": "yeye", "styles": {"color": "#e2e2e2"}, "text":data.name},
+          {"tag": "p", "styles": {"color": "#9a9a9a"}, "text":artistText},
+          {"classes": ["modInterface"]},
+          {"id": "r-"+data.id, "classes": ['btn-primary', 'button', 'go', "modBtn"], "text": "Remove", "listeners":{
+            "click": function(){
+              removeTrack(access, data.id, playlistID, position, function(res){
+                //TODO: change ids to positions and attr to track id, update positions after removal!
+                $("#track-"+position).remove();
+                while($("#track-"+(parseInt(position)+1)).length){
+                  position++;
+                  $("#track-"+position).attr("id", "track-"+(parseInt(position)-1));
+                  $("#edit-"+position).attr("id", "edit-"+(parseInt(position)-1));
+                }
+                $(".textModule").remove();
+              })
+            }
+          }},
+          {"id": "s-"+data.id, "classes": ['btn-primary', 'button', 'go', 'modBtn'], "text": "Search", "listeners":{
+            "click": function(){
+              search(data.name, data.artists[0].name, function(res){
+                $(".modInterface").html("");
+                for(var item of res.items){
+                  var artistText = data.artists[0].name;
+                  for(var x=1;x<data.artists.length;x++){artistText+=", "+data.artists[x].name}
+                  var trackDiv = "<td class='modTrackComp'>"+item.name+"</td>";
+                  var artistDiv = "<td class='modTrackComp'>"+artistText+"</td>";
+                  var albumDiv = "<td class='modTrackComp'>" +item.album.name+"</td>";
+                  $(".modInterface").append("<table class='modTrack'><tbody><tr>"+trackDiv+artistDiv+albumDiv+"</tr></tbody></table>");
+                }
+              });
+            } 
+          }}
+        ]
+        var module = new TextModule(lineDivs, data.id);
+        $('.textModule').slideDown(500, function(){
+          module.activateListeners();
+        })}
+      )}
+    )
     $("#cancel").click(function(){
       toggleDisplay();
       $.get(getURL("remove", access)+"&id=" + playlistID, function(){
@@ -118,15 +168,20 @@ function checkTrack(access, playlistID, tracks, index){
 }
 
 function getURL(program, access){
-  return "http://cleanify.mooo.com/"+program + "?u="+access;
+  return "http://cleanify.me/"+program + "?u="+access;
 }
 
-function trackEquals(trackName, resultName, artistName, resultArtist){
+function trackEquals(contains, trackName, resultName, artistName, resultArtist){
   trackName = trackName.clean();
   resultName = resultName.clean();
   artistName = artistName.clean();
   resultArtist = resultArtist.clean();
-  return ((trackName.includes(resultName) || resultName.includes(trackName)) && artistName == resultArtist);
+  if(!contains){
+    return (trackName == resultName && artistName == resultArtist)
+  }
+  else{
+    return ((trackName.includes(resultName) || resultName.includes(trackName)) && artistName == resultArtist);
+  }
 }
 
 function pageFunction(access){
@@ -150,10 +205,11 @@ function pageFunction(access){
             $("select").append("<option data-playlist='"+playlists[i].id+"' data-id='"+i+"'>"+playlists[i].name+"</option>");
           }
       $("#go").click(function(){//start clean on click
-        $(".loading").slideDown(500);
+        //$(".loading").slideDown(500);
+        $("#labels").slideDown(500);
         $("select")[0].disabled = true;
         $(this).css('display', 'none').off('click');
-        $("#loading").show();
+        //$("#loading").show();
         //find selected dropdown option
         var dropdown = document.getElementsByTagName("select")[0];
         var selected = dropdown.options[dropdown.selectedIndex];
@@ -202,7 +258,7 @@ function pageFunction(access){
           function cont(){//make and populate new playlist
             $.get(getURL("create", access)+"&name="+playlist.name + " (Clean)", function(data){
               var playlistID = data.id;
-              checkTrack(access, playlistID, tracks, 0);//begin loop through tracks
+              checkTrack(access, playlistID, tracks, 0, 0);//begin loop through tracks
             });
             $("#tracks").show();
             $("#remove").show();
@@ -228,6 +284,15 @@ function pageFunction(access){
 
 function search(name, artist, callback){
   $.get(getURL('search')+'&name='+name+'&artist='+artist, function(data){callback(data)})
+}
+
+function getTrack(id, callback){
+  $.get(getURL('trackById')+'&id='+id, function(data){callback(data)});
+}
+
+function removeTrack(access, id, playlistid, position, callback){
+  console.log(position);
+  $.get(getURL('remtrack', access)+'&trackid='+id + '&playlistid='+playlistid+'&position='+position, function(data){callback(data)})
 }
 
 String.prototype.clean = function(){

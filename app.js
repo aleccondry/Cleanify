@@ -15,7 +15,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 var app = express();
 var client_id = '366e8b5ceafa4a548f5be611eaffe8ab'; // Your client id
 var client_secret = fs.readFileSync("env.txt").toString().trim();
-var redirect_uri = 'http://cleanify.mooo.com/callback'; // Your redirect uri
+var redirect_uri = 'http://cleanify.me/callback'; // Your redirect uri
 var refresh_token = null;
 
 // Initialize the API Wrapper
@@ -165,6 +165,7 @@ app.get('/create', function(req, res){
 
 app.get('/addtrack', function(req, res){
   var access = req.query.u;
+  var options = (req.query.position)?{"position":req.query.position}:{};
   spotifyApi.setAccessToken(access);
     var playlistID = req.query.playlistid;
     var trackID = req.query.trackid;
@@ -172,7 +173,7 @@ app.get('/addtrack', function(req, res){
        console.log("couldn't add tracks", err)
         //wait and try again
         setTimeout(function(){
-          spotifyApi.addTracksToPlaylist(playlistID, ["spotify:track:"+trackID]).then(function(data){
+          spotifyApi.addTracksToPlaylist(playlistID, ["spotify:track:"+trackID], options).then(function(data){
             res.json(data.body);
           }, function(err){tryAgain(err)})
         }, 200)
@@ -184,6 +185,17 @@ app.get('/addtrack', function(req, res){
           tryAgain(err);
         }
       });
+});
+
+app.get('/remtrack', function(req, res){
+  var access = req.query.u;
+  var position = parseInt(req.query.position);
+  spotifyApi.setAccessToken(access);
+  var playlistID = req.query.playlistid;
+  var trackID = req.query.trackid;
+  var bodyObject = {"uri": "spotify:track:"+trackID, "positions": [position]};
+  console.log(bodyObject)
+  spotifyApi.removeTracksFromPlaylist(playlistID, [bodyObject]).then(function(data){res.json(data.body);},function(err){console.log("couldn't remove", err)});
 });
 
 app.get('/playlist', function(req, res){
@@ -211,6 +223,12 @@ app.get('/remove', function(req, res){
   var id = req.query.id;
   spotifyApi.unfollowPlaylist(id).then(function(data){console.log("successfully deleted")},
       function(err){console.log("could not delete", err)});
+})
+
+app.get('/trackById', function(req, res){
+  var id = req.query.id;
+  console.log("getting track")
+  spotifyApi.getTrack(id).then(function(data){res.json(data.body)}, function(err){console.log("couldn't get track", err)});
 })
 
 
