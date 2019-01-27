@@ -17,6 +17,21 @@ body {
   padding-top: 48px;
 }
 
+#main2{
+  background-color:#36393f;
+  color: #dcddd9;
+  height: 90%;
+  padding-top: 10%;
+  padding-bottom: 15%;
+  background-image: url("images/mattacleanify.jpg");
+}
+
+
+
+
+
+}
+
 #navbar {
   min-height: 80px;
 }
