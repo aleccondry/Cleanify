@@ -66,9 +66,9 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
           loopTracks(true);
         }
         if(!cleanFound){//if still not found, remove from playlist
-          $("#remove").append("<div class='remove'>"+track.name + "</div>");
           var divRemove = $("#remove")[0];
           var removeShouldChange = (divRemove.scrollHeight - divRemove.scrollTop < 220);
+          $("#remove").append("<div class='remove'>"+track.name + "</div>");
           if(removeShouldChange){
              divRemove.scrollTop = divRemove.scrollHeight;
            }
@@ -122,32 +122,57 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
           {"id": "r-"+data.id, "classes": ['btn-primary', 'button', 'go', "modBtn"], "text": "Remove", "listeners":{
             "click": function(){
               removeTrack(access, data.id, playlistID, position, function(res){
-                //TODO: change ids to positions and attr to track id, update positions after removal!
-                $("#track-"+position).remove();
-                while($("#track-"+(parseInt(position)+1)).length){
-                  position++;
-                  $("#track-"+position).attr("id", "track-"+(parseInt(position)-1));
-                  $("#edit-"+position).attr("id", "edit-"+(parseInt(position)-1));
-                }
-                $(".textModule").remove();
+                TextModule.removeTrack(position);
               })
             }
           }},
           {"id": "s-"+data.id, "classes": ['btn-primary', 'button', 'go', 'modBtn'], "text": "Search", "listeners":{
             "click": function(){
-              search(data.name, data.artists[0].name, function(res){
-                $(".modInterface").html("");
-                $(".modInterface").append("<table class='modTrack'><tbody><th><td class='modTrackHeader'>Name</td><td class='modTrackHeader'>Artist</td><td class='modTrackHeader'>Album</td></th></tbody></table>");
-                for(var item of res.items){
-                  var artistText = data.artists[0].name;
-                  for(var x=1;x<data.artists.length;x++){artistText+=", "+data.artists[x].name}
-                  var trackDiv = "<td class='modTrackComp'>"+item.name+"</td>";
-                  var artistDiv = "<td class='modTrackComp'>"+artistText+"</td>";
-                  var albumDiv = "<td class='modTrackComp'>" +item.album.name+"</td>";
-                  $(".modInterface").append("<table class='modTrack'><tbody><tr>"+trackDiv+artistDiv+albumDiv+"</tr></tbody></table>");
-                }
-              });
-            }
+              $(".modInterface").hide().html("<input id='searchBar' class='form-control' value='"+'"'+data.name+'" by '+'"'+data.artists[0].name+'"' +"'>")
+              .append("<div class='btn-primary button go' id='searchGo'>Go</div>")
+              .fadeIn(500);
+              $("#searchGo").on('click', function(){ 
+                var value = $("#searchBar")[0].value;
+                var name = value.split('"')[1]
+                var artist = value.split('"')[3];
+                $(this).off('click').slideUp(500);
+                $("#searchBar").slideUp(500);
+                search(name, artist, function(res){
+                  //$(".modInterface").html("");
+                  var i = 0;
+                  for(var item of res.items){
+                    var style = (item.explicit)?"color:red;":"";
+                    var artistText = item.artists[0].name;
+                    $(".modInterface").append("<table class='modTrack'><tbody><th><td class='modTrackHeader'>Name</td><td class='modTrackHeader'>Artist</td><td class='modTrackHeader'>Album</td></th></tbody></table>");
+                    for(var x=1;x<item.artists.length;x++){artistText+=", "+item.artists[x].name}
+                    var trackDiv = "<td class='modTrackComp'>"+item.name+"</td>";
+                    var artistDiv = "<td class='modTrackComp'>"+artistText+"</td>";
+                    var albumDiv = "<td class='modTrackComp'>" +item.album.name+"</td>";
+                    var replaceBtn = "<tr><td id='rep"+i+"' track='"+item.id+"' class='repButton button go btn-primary'>Replace</td></tr>";
+                    $(".modInterface").append("<table class='modTrack' id='TR"+i+"' style='"+style+"'><tbody><tr>"+trackDiv+artistDiv+albumDiv+"</tr>"+replaceBtn+"</tbody></table>");
+                    i++;
+                  }
+                  $(".modTrack").on('mouseenter', function(){
+                    $("#rep"+$(this).attr('id').split('R')[1]).fadeIn(100);
+                  })
+                  $(".modTrack").on('mouseleave', function(){
+                    $("#rep"+$(this).attr('id').split('R')[1]).fadeOut(100);
+                  })
+                  $('.repButton').on('click', function(){
+                    var track = $(this).attr('track');
+                    removeTrack(access, data.id, playlistID, position, function(res){
+                        TextModule.removeTrack(position);
+                        addTrackAtIdx(access, track, playlistID, position, function(response){
+                          var html = "<div id='track-"+position+"' track='"+track+"' class='track '>"+track.name + "<a class='btn-primary button go edit' id=edit-"+position+" track='"+track+"'>Edit</a></div>"
+                          insertAtIndex(html, position); 
+                        });
+                    });
+                  })
+                });
+              })
+
+
+            } 
           }}
         ]
         var module = new TextModule(lineDivs, data.id);
@@ -284,6 +309,8 @@ function pageFunction(access){
 }
 
 function search(name, artist, callback){
+  name = name.clean();
+  artist = artist.clean();
   $.get(getURL('search')+'&name='+name+'&artist='+artist, function(data){callback(data)})
 }
 
@@ -292,10 +319,21 @@ function getTrack(id, callback){
 }
 
 function removeTrack(access, id, playlistid, position, callback){
-  console.log(position);
   $.get(getURL('remtrack', access)+'&trackid='+id + '&playlistid='+playlistid+'&position='+position, function(data){callback(data)})
+}
+
+function addTrackAtIdx(access, id, playlistid, position, callback){
+  $.get(getURL('addtrack', access)+'&trackid='+id+'&playlistid='+playlistid+'&position='+position, function(data){callback(data)});  
 }
 
 String.prototype.clean = function(){
   return this.toLowerCase().replace("'", "");
+}
+
+function insertAtIndex(div, i) {
+  if(i === 0) {
+         $("#controller").prepend("<div>okay things</div>");        
+              return;
+   }
+  $("#controller > div:nth-child(" + (i) + ")").after(div);
 }

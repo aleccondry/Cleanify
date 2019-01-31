@@ -24,7 +24,10 @@ class TextModule {
   }
 
   activateListeners(){
-    $("#intro #xbutton").on('click', function(){$('.textModule').remove(); $("#intro #xbutton").off('click')})
+    $("#intro #xbutton").on('click', function(){
+      $(".textModule").slideUp(500, function(){$(this).remove();})
+      $("#intro #xbutton").off('click')
+    })
 
     for(var i = 0; i< this.divs.length; i++){
       var div = this.divs[i];
@@ -35,5 +38,17 @@ class TextModule {
       }
     }
   }
-
+  
+  static removeTrack(position){
+    var removed = position;
+    while($("#track-"+(parseInt(position)+1)).length){
+      position++;
+      $("#track-"+position).attr("id", "track-"+(parseInt(position)-1));
+      $("#edit-"+position).attr("id", "edit-"+(parseInt(position)-1));
+    }
+    $(".textModule").slideUp(500, function(){
+      $(this).remove();
+      $("#track-"+removed).fadeOut(300, function(){$(this).remove();});
+    })
+  }
 }

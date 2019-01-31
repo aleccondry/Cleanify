@@ -26,12 +26,6 @@ body {
   background-image: url("images/mattacleanify.jpg");
 }
 
-
-
-
-
-}
-
 #navbar {
   min-height: 80px;
 }
@@ -241,7 +235,7 @@ footer{
 }
 
 #go {
-    width: 20em;
+    width: 18em;
     margin: 0 auto;
 }
 
@@ -257,6 +251,12 @@ select {
     font-size: 18px;
 }
 
+.repButton {
+    display:none;
+    position:absolute;
+    right:10px;
+    top:0;
+}
 @media only screen and (max-width: 720px){
     select {
         width: auto;
@@ -266,5 +266,8 @@ select {
     }
     #cancel, #confirm {
         font-size: 14px;
+    }
+    #go {
+        font-size: 12px;
     }
 }
