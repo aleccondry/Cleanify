@@ -102,7 +102,7 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
     $("#ui").fadeIn(2000);
     $(".track").on('mouseenter', function(){
       $("#edit-"+$(this).attr('id').split("-")[1]).show();
-    }) 
+    })
     $(".track").on('mouseleave', function(){
       $("#edit-"+$(this).attr('id').split("-")[1]).hide();
     })
@@ -137,6 +137,7 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
             "click": function(){
               search(data.name, data.artists[0].name, function(res){
                 $(".modInterface").html("");
+                $(".modInterface").append("<table class='modTrack'><tbody><th><td class='modTrackHeader'>Name</td><td class='modTrackHeader'>Artist</td><td class='modTrackHeader'>Album</td></th></tbody></table>");
                 for(var item of res.items){
                   var artistText = data.artists[0].name;
                   for(var x=1;x<data.artists.length;x++){artistText+=", "+data.artists[x].name}
@@ -146,7 +147,7 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
                   $(".modInterface").append("<table class='modTrack'><tbody><tr>"+trackDiv+artistDiv+albumDiv+"</tr></tbody></table>");
                 }
               });
-            } 
+            }
           }}
         ]
         var module = new TextModule(lineDivs, data.id);

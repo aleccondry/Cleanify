@@ -221,6 +221,13 @@ footer{
     display: table-cell;
 }
 
+.modTrackHeader{
+  overflow-x: scroll;
+  width: 30%;
+  margin-right: 3%;
+  color: #dcddd9;
+}
+
 .modOverlay {
     position: absolute;
     width: 100%;

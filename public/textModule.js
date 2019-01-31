@@ -1,4 +1,4 @@
-class TextModule { 
+class TextModule {
   constructor(divs, data){
     this.data = data;
     this.divs = divs;
@@ -13,16 +13,18 @@ class TextModule {
       var string = "<"+tag + " id='"+id+"' class='"+classes+"' style='"+styles+"'>"+text+"</"+tag+">";
       html += string;
     }
+    var xbutton = "<div id='xbutton' class='btn btn-primary btn-lg' style='font-size: 100%;position: relative;padding: 4px 10px 4px 10px;display: inline;left: 45%;top: 10px;text-align: center;''>X</div>"
     this.element = document.createElement('div');
     this.element.innerHTML = html;
+    this.element.innerHTML += xbutton;
     this.element.classList.add('textModule');
     $("body").append(this.element)
-      
-   
+
+
   }
 
   activateListeners(){
-    $("#intro").on('click', function(){$('.textModule').remove(); $("#intro").off('click')})
+    $("#intro #xbutton").on('click', function(){$('.textModule').remove(); $("#intro #xbutton").off('click')})
 
     for(var i = 0; i< this.divs.length; i++){
       var div = this.divs[i];
@@ -31,7 +33,7 @@ class TextModule {
           $("#"+div.id).on(listener,div.listeners[listener]);
         }
       }
-    } 
+    }
   }
 
 }
