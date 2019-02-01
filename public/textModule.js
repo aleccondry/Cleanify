@@ -13,7 +13,7 @@ class TextModule {
       var string = "<"+tag + " id='"+id+"' class='"+classes+"' style='"+styles+"'>"+text+"</"+tag+">";
       html += string;
     }
-    var xbutton = "<div id='xbutton' class='btn btn-primary btn-lg' style='font-size: 100%;position: relative;padding: 4px 10px 4px 10px;display: inline;left: 45%;top: 10px;text-align: center;''>X</div>"
+    var xbutton = "<div id='xbutton' class='btn btn-primary btn-lg' style='font-size: 100%;position: absolute;padding: 4px 10px 4px 10px;display: inline;right: 5%;top: 10px;text-align: center;min-width: 0px;'>X</div>"
     this.element = document.createElement('div');
     this.element.innerHTML = xbutton;
     this.element.innerHTML += html;
