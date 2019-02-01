@@ -200,7 +200,7 @@ footer{
     overflow: scroll;
 }
 
-.modTrack {
+.modTrack, .headerRow {
     width: 100%;
     border-style: solid;
     border-color: #5a5a5a;
@@ -208,18 +208,15 @@ footer{
     position:relative;
 }
 
-.modTrackComp {
+.modTrackComp, .modTrackHeader {
     overflow-x: scroll;
     width: 30%;
     margin-right: 3%;
     display: table-cell;
 }
 
-.modTrackHeader{
-  overflow-x: scroll;
-  width: 30%;
-  margin-right: 3%;
-  color: #dcddd9;
+.modTrackHeader {
+    text-align: center;
 }
 
 .modOverlay {

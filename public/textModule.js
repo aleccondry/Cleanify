@@ -15,8 +15,8 @@ class TextModule {
     }
     var xbutton = "<div id='xbutton' class='btn btn-primary btn-lg' style='font-size: 100%;position: relative;padding: 4px 10px 4px 10px;display: inline;left: 45%;top: 10px;text-align: center;''>X</div>"
     this.element = document.createElement('div');
-    this.element.innerHTML = html;
-    this.element.innerHTML += xbutton;
+    this.element.innerHTML = xbutton;
+    this.element.innerHTML += html;
     this.element.classList.add('textModule');
     $("body").append(this.element)
 
@@ -24,9 +24,9 @@ class TextModule {
   }
 
   activateListeners(){
-    $("#intro #xbutton").on('click', function(){
+    $("#intro, #xbutton").on('click', function(){
       $(".textModule").slideUp(500, function(){$(this).remove();})
-      $("#intro #xbutton").off('click')
+      $("#intro, #xbutton").off('click')
     })
 
     for(var i = 0; i< this.divs.length; i++){
@@ -39,7 +39,7 @@ class TextModule {
     }
   }
   
-  static removeTrack(position){
+  static removeTrack(position, callback){
     var removed = position;
     while($("#track-"+(parseInt(position)+1)).length){
       position++;
@@ -49,6 +49,9 @@ class TextModule {
     $(".textModule").slideUp(500, function(){
       $(this).remove();
       $("#track-"+removed).fadeOut(300, function(){$(this).remove();});
+      if(callback){
+        callback();
+      }
     })
   }
 }

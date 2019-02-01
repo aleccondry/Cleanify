@@ -106,10 +106,11 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
     $(".track").on('mouseleave', function(){
       $("#edit-"+$(this).attr('id').split("-")[1]).hide();
     })
-    $(".edit").on('click', function(){
-      var parentDiv = $(this)[0];
-      var position = $(this).attr('id').replace('edit-', '');
-      var id = $(this).attr('track');
+    //establish edit click listener function
+    function editClick(that){
+      var parentDiv = $(that)[0];
+      var position = $(that).attr('id').replace('edit-', '');
+      var id = $(that).attr('track');
       getTrack(id, function(data){
         var artistText = data.artists[0].name;
         for(var x = 1; x < data.artists.length; x++){
@@ -139,16 +140,16 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
                 $("#searchBar").slideUp(500);
                 search(name, artist, function(res){
                   //$(".modInterface").html("");
+                    $(".modInterface").append("<table class='headerRow'><tbody><tr><th class='modTrackHeader'>Name</th><th class='modTrackHeader'>Artist</th><th class='modTrackHeader'>Album</th></tr></tbody></table>");
                   var i = 0;
                   for(var item of res.items){
                     var style = (item.explicit)?"color:red;":"";
                     var artistText = item.artists[0].name;
-                    $(".modInterface").append("<table class='modTrack'><tbody><th><td class='modTrackHeader'>Name</td><td class='modTrackHeader'>Artist</td><td class='modTrackHeader'>Album</td></th></tbody></table>");
                     for(var x=1;x<item.artists.length;x++){artistText+=", "+item.artists[x].name}
                     var trackDiv = "<td class='modTrackComp'>"+item.name+"</td>";
                     var artistDiv = "<td class='modTrackComp'>"+artistText+"</td>";
                     var albumDiv = "<td class='modTrackComp'>" +item.album.name+"</td>";
-                    var replaceBtn = "<tr><td id='rep"+i+"' track='"+item.id+"' class='repButton button go btn-primary'>Replace</td></tr>";
+                    var replaceBtn = "<tr><td id='rep"+i+"' name='"+item.name+"' track='"+item.id+"' class='repButton button go btn-primary'>Replace</td></tr>";
                     $(".modInterface").append("<table class='modTrack' id='TR"+i+"' style='"+style+"'><tbody><tr>"+trackDiv+artistDiv+albumDiv+"</tr>"+replaceBtn+"</tbody></table>");
                     i++;
                   }
@@ -160,11 +161,20 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
                   })
                   $('.repButton').on('click', function(){
                     var track = $(this).attr('track');
+                    var name = $(this).attr('name'); 
                     removeTrack(access, data.id, playlistID, position, function(res){
-                        TextModule.removeTrack(position);
-                        addTrackAtIdx(access, track, playlistID, position, function(response){
-                          var html = "<div id='track-"+position+"' track='"+track+"' class='track '>"+track.name + "<a class='btn-primary button go edit' id=edit-"+position+" track='"+track+"'>Edit</a></div>"
-                          insertAtIndex(html, position); 
+                        TextModule.removeTrack(position, function(){
+                          addTrackAtIdx(access, track, playlistID, position, function(response){
+                            var html = "<div id='track-"+position+"' track='"+track+"' class='track '>"+name + "<a class='btn-primary button go edit' id=edit-"+position+" track='"+track+"'>Edit</a></div>"
+                            insertAtIndex(html, position); 
+                            $("#track-"+position).on('mouseenter', function(){
+                                  $("#edit-"+position).show();
+                            })
+                            $("#track-"+position).on('mouseleave', function(){
+                                  $("#edit-"+ position).hide();
+                            })
+                            $("#edit-"+position).on('click', function(){editClick(this)});
+                          });
                         });
                     });
                   })
@@ -180,7 +190,9 @@ function checkTrack(access, playlistID, tracks, index, numAdded){
           module.activateListeners();
         })}
       )}
-    )
+
+    
+    $(".edit").on('click', function(){editClick(this)});
     $("#cancel").click(function(){
       toggleDisplay();
       $.get(getURL("remove", access)+"&id=" + playlistID, function(){
@@ -331,9 +343,10 @@ String.prototype.clean = function(){
 }
 
 function insertAtIndex(div, i) {
+  i = parseInt(i);
   if(i === 0) {
-         $("#controller").prepend("<div>okay things</div>");        
+         $("#tracks").prepend(div);        
               return;
    }
-  $("#controller > div:nth-child(" + (i) + ")").after(div);
+  $("#tracks > div:nth-child(" + (i) + ")").after(div);
 }
