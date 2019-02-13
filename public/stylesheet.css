@@ -263,8 +263,15 @@ select {
     }
     #cancel, #confirm {
         font-size: 14px;
+        position: relative;
+        display: inline;
+        bottom: -100px;
     }
     #go {
         font-size: 12px;
+    }
+    #main2{
+        padding-top:20%;
+        padding-bottom:40%;
     }
 }
